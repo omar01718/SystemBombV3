@@ -33,10 +33,6 @@ const MainAppContent: React.FC = () => {
       
       {/* Navbar Header */}
       <Navbar />
-      <div className="bg-amber-950 text-amber-100 text-center text-sm p-3">
-        Integración en pruebas con Supabase. No ingrese datos reales hasta completar las pruebas de seguridad.
-      </div>
-
       {/* Mobile Menu Toggle Bar */}
       <div className="md:hidden flex items-center justify-between px-4 py-2.5 bg-slate-900 border-b border-slate-800">
         <button
