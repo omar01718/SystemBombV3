@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useApp } from '@/lib/context/AppContext';
 import { useMounted } from '@/lib/useMounted';
 import {
@@ -21,18 +21,9 @@ import {
 export const DashboardView: React.FC = () => {
   const { resources, loans, maintenanceList, setActiveTab, currentUser } = useApp();
   const mounted = useMounted();
-  const [formattedDate, setFormattedDate] = useState('Noviembre 2026');
-
-  useEffect(() => {
-    setFormattedDate(
-      new Date().toLocaleDateString('es-PE', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      })
-    );
-  }, []);
+  const formattedDate = mounted
+    ? new Date().toLocaleDateString('es-PE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+    : '';
 
   const totalResources = resources.length;
   const availableResources = resources.filter(r => r.status === 'Disponible').length;
@@ -44,10 +35,12 @@ export const DashboardView: React.FC = () => {
   // Critical Alerts
   const lowStockItems = resources.filter(r => r.stockActual <= r.stockMinimo);
   
-  // Safe inspection check without calling new Date() during SSR
+  // Show inspections due within the next 30 days.
   const inspectionAlerts = resources.filter(r => {
-    // Check if inspection is due in late 2026 / near term
-    return r.inspectionDate <= '2026-11-30';
+    if (!mounted) return false;
+    const deadline = new Date();
+    deadline.setDate(deadline.getDate() + 30);
+    return r.inspectionDate <= deadline.toISOString().substring(0, 10);
   });
 
   return (

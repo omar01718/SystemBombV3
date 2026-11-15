@@ -54,7 +54,7 @@ export type ShiftType =
   | 'Guardia Bravo'
   | 'Comisión de Servicio Especial';
 
-export type LoanStatus = 'Activo' | 'Devuelto' | 'Observado';
+export type LoanStatus = 'Activo' | 'Devuelto' | 'Observado' | 'Anulado';
 
 export interface Loan {
   id: string;
@@ -72,6 +72,8 @@ export interface Loan {
   conditionIn?: 'Óptimo' | 'Buen Estado' | 'Deteriorado' | 'Requiere Mantenimiento';
   status: LoanStatus;
   notes?: string;
+  cancellationReason?: string;
+  cancelledAt?: string;
 }
 
 export type MaintenanceType = 

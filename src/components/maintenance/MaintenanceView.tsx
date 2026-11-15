@@ -41,9 +41,9 @@ export const MaintenanceView: React.FC = () => {
   const [formData, setFormData] = useState({
     code: '',
     equipmentName: '',
-    equipmentType: 'Unidad Autobomba' as any,
+    equipmentType: 'Unidad Autobomba' as Maintenance['equipmentType'],
     maintenanceType: MAINTENANCE_TYPES[0],
-    scheduledDate: '2026-11-15',
+    scheduledDate: '',
     technician: '',
     cost: 0,
     status: 'Programado' as MaintenanceStatus,
@@ -67,15 +67,15 @@ export const MaintenanceView: React.FC = () => {
       addToast('error', 'Permiso Restringido', 'Solo el Administrador de Logística puede programar órdenes de mantenimiento.');
       return;
     }
-    const nextCode = `MNT-2026-${String(maintenanceList.length + 19).padStart(3, '0')}`;
+    const nextCode = `MNT-${crypto.randomUUID()}`;
     setFormData({
       code: nextCode,
       equipmentName: '',
       equipmentType: 'Unidad Autobomba',
       maintenanceType: MAINTENANCE_TYPES[0],
-      scheduledDate: '2026-11-15',
+      scheduledDate: '',
       technician: '',
-      cost: 250,
+      cost: 0,
       status: 'Programado',
       priority: 'Media',
       observations: ''
@@ -103,24 +103,28 @@ export const MaintenanceView: React.FC = () => {
     });
   };
 
-  const handleCreateSubmit = (e: React.FormEvent) => {
+  const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.equipmentName.trim() || !formData.technician.trim()) {
       addToast('error', 'Datos Incompletos', 'Indique el equipo o vehículo y el técnico responsable.');
       return;
     }
-    const res = addMaintenance(formData);
+    const res = await addMaintenance(formData);
     if (res.success) setIsCreateModalOpen(false);
   };
 
-  const handleEditSubmit = (e: React.FormEvent) => {
+  const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingItem) return;
-    const res = updateMaintenance(editingItem.id, formData);
+    const res = await updateMaintenance(editingItem.id, formData);
     if (res.success) setEditingItem(null);
   };
 
   const handleQuickStatusChange = (id: string, newStatus: MaintenanceStatus) => {
+    if (currentUser.role !== 'admin_logistica') {
+      addToast('error', 'Permiso restringido', 'Solo un administrador puede cambiar el estado de una orden.');
+      return;
+    }
     const today = new Date().toISOString().substring(0, 10);
     updateMaintenance(id, {
       status: newStatus,
@@ -266,7 +270,10 @@ export const MaintenanceView: React.FC = () => {
                 {/* Status Switcher & Actions */}
                 <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
                   <div className="flex items-center gap-1">
-                    {mnt.status !== 'Completado' && (
+                    {currentUser.role !== 'admin_logistica' && (
+                      <span className="text-slate-400 text-[11px]">Solo un administrador puede cambiar el estado.</span>
+                    )}
+                    {currentUser.role === 'admin_logistica' && mnt.status !== 'Completado' && (
                       <button
                         onClick={() => handleQuickStatusChange(mnt.id, 'Completado')}
                         className="px-2.5 py-1 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 text-[11px] font-semibold transition-colors flex items-center gap-1"
@@ -275,7 +282,7 @@ export const MaintenanceView: React.FC = () => {
                         <span>Marcar Listo</span>
                       </button>
                     )}
-                    {mnt.status === 'Programado' && (
+                    {currentUser.role === 'admin_logistica' && mnt.status === 'Programado' && (
                       <button
                         onClick={() => handleQuickStatusChange(mnt.id, 'En Curso')}
                         className="px-2.5 py-1 rounded-lg bg-amber-600/20 hover:bg-amber-600/30 text-amber-400 border border-amber-500/30 text-[11px] font-semibold transition-colors flex items-center gap-1"
@@ -366,7 +373,7 @@ export const MaintenanceView: React.FC = () => {
                   </label>
                   <select
                     value={formData.priority}
-                    onChange={e => setFormData({ ...formData, priority: e.target.value as any })}
+                    onChange={e => setFormData({ ...formData, priority: e.target.value as Maintenance['priority'] })}
                     className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-slate-100 focus:ring-2 focus:ring-red-500 focus:outline-none"
                   >
                     <option value="Alta">Alta (Emergencia inmediata)</option>

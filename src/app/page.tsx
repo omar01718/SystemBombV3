@@ -15,7 +15,7 @@ import { ToastContainer } from '@/components/ui/Toast';
 import { Menu, X, Flame } from 'lucide-react';
 
 const MainAppContent: React.FC = () => {
-  const { activeTab, isAuthenticated } = useApp();
+  const { activeTab, isAuthenticated, currentUser, auditAvailable } = useApp();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // If not logged in, render the Login Screen
@@ -33,6 +33,9 @@ const MainAppContent: React.FC = () => {
       
       {/* Navbar Header */}
       <Navbar />
+      <div className="bg-amber-950 text-amber-100 text-center text-sm p-3">
+        Integración en pruebas con Supabase. No ingrese datos reales hasta completar las pruebas de seguridad.
+      </div>
 
       {/* Mobile Menu Toggle Bar */}
       <div className="md:hidden flex items-center justify-between px-4 py-2.5 bg-slate-900 border-b border-slate-800">
@@ -84,7 +87,12 @@ const MainAppContent: React.FC = () => {
           {activeTab === 'inventory' && <InventoryView />}
           {activeTab === 'loans' && <LoansView />}
           {activeTab === 'maintenance' && <MaintenanceView />}
-          {activeTab === 'audit' && <AuditView />}
+          {activeTab === 'audit' && currentUser.role === 'admin_logistica' && auditAvailable && <AuditView />}
+          {activeTab === 'audit' && (currentUser.role !== 'admin_logistica' || !auditAvailable) && (
+            <div className="rounded-xl border border-amber-800 bg-amber-950 p-6 text-amber-100">
+              {currentUser.role !== 'admin_logistica' ? 'La auditoría está reservada al administrador.' : 'La auditoría no está disponible. Compruebe la migración 005 y la conexión.'}
+            </div>
+          )}
           {activeTab === 'security' && <SecurityView />}
         </main>
 

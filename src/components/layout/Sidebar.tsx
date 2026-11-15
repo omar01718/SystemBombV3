@@ -55,7 +55,7 @@ export const Sidebar: React.FC = () => {
     },
     {
       id: 'security',
-      label: 'Seguridad y Cripto',
+      label: 'Seguridad',
       icon: <ShieldCheck className="w-5 h-5 shrink-0" />
     }
   ];

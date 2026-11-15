@@ -37,11 +37,11 @@ export const AuditView: React.FC = () => {
             Bitácora de Auditoría y Trazabilidad Operativa
           </h2>
           <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">
-            {auditLogs.length} eventos registrados
+             {auditLogs.length} eventos cargados
           </span>
         </div>
         <p className="text-xs text-slate-400 mt-1">
-          Registro cronológico inmutable de todas las altas, bajas, préstamos de guardia y modificaciones efectuadas en el sistema.
+          Últimos 500 cambios registrados desde la activación de la auditoría. No incluye inicios de sesión ni operaciones anteriores a su instalación.
         </p>
       </div>
 
@@ -69,9 +69,6 @@ export const AuditView: React.FC = () => {
             <option value="CREACIÓN">Altas / Creaciones</option>
             <option value="ACTUALIZACIÓN">Actualizaciones</option>
             <option value="ELIMINACIÓN">Bajas / Eliminaciones</option>
-            <option value="PRÉSTAMO">Préstamos de Guardia</option>
-            <option value="DEVOLUCIÓN">Devoluciones</option>
-            <option value="LOGIN">Inicios de Sesión</option>
           </select>
         </div>
       </div>

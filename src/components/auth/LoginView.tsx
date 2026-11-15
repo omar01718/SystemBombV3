@@ -17,35 +17,23 @@ import {
 } from 'lucide-react';
 
 export const LoginView: React.FC = () => {
-  const { login } = useApp();
+  const { login, addToast } = useApp();
 
-  const [username, setUsername] = useState('admin');
-  const [password, setPassword] = useState('BomberosB233@2026!');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [rememberMe, setRememberMe] = useState(true);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setTimeout(() => {
-      login(username, password);
+    try {
+      await login(username, password);
+    } catch {
+      addToast('error', 'Error de conexión', 'No se pudo verificar el acceso. Inténtelo nuevamente.');
+    } finally {
       setIsLoading(false);
-    }, 400);
-  };
-
-  const handleQuickLogin = (userRole: 'admin' | 'bombero' | 'maquinista') => {
-    setIsLoading(true);
-    setTimeout(() => {
-      if (userRole === 'admin') {
-        login('admin', 'BomberosB233@2026!');
-      } else if (userRole === 'bombero') {
-        login('bombero', 'Guardia233*');
-      } else {
-        login('maquinista', 'MaquinariaB233#');
-      }
-      setIsLoading(false);
-    }, 300);
+    }
   };
 
   return (
@@ -97,16 +85,16 @@ export const LoginView: React.FC = () => {
             {/* Username */}
             <div>
               <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
-                Usuario / Código de Efectivo
+                Correo electrónico
               </label>
               <div className="relative">
                 <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                 <input
-                  type="text"
+                  type="email"
                   required
                   value={username}
                   onChange={e => setUsername(e.target.value)}
-                  placeholder="Ej. admin o bombero"
+                  placeholder="correo@ejemplo.com"
                   className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
                 />
               </div>
@@ -118,7 +106,6 @@ export const LoginView: React.FC = () => {
                 <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
                   Contraseña de Seguridad
                 </label>
-                <span className="text-[11px] text-slate-400">Hash SHA-256</span>
               </div>
               <div className="relative">
                 <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
@@ -141,19 +128,6 @@ export const LoginView: React.FC = () => {
               </div>
             </div>
 
-            {/* Remember Me */}
-            <div className="flex items-center justify-between text-xs text-slate-400">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={e => setRememberMe(e.target.checked)}
-                  className="rounded bg-slate-800 border-slate-700 text-red-600 focus:ring-red-500"
-                />
-                <span>Mantener sesión iniciada en este terminal</span>
-              </label>
-            </div>
-
             {/* Submit Button */}
             <button
               type="submit"
@@ -172,54 +146,13 @@ export const LoginView: React.FC = () => {
 
           </form>
 
-          {/* Quick Access Demo Accounts */}
-          <div className="pt-4 border-t border-slate-800/80 space-y-2">
-            <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider text-center">
-              Perfiles de Demostración Rápida
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('admin')}
-                className="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700/80 text-left transition-all group"
-              >
-                <div className="text-[11px] font-bold text-red-400 group-hover:text-red-300">
-                  Admin Logística
-                </div>
-                <div className="text-[10px] text-slate-400">Capitán Mendoza</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('bombero')}
-                className="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700/80 text-left transition-all group"
-              >
-                <div className="text-[11px] font-bold text-sky-400 group-hover:text-sky-300">
-                  Bombero Guardia
-                </div>
-                <div className="text-[10px] text-slate-400">Seccionario Quispe</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('maquinista')}
-                className="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700/80 text-left transition-all group"
-              >
-                <div className="text-[11px] font-bold text-amber-400 group-hover:text-amber-300">
-                  Jefe de Flota
-                </div>
-                <div className="text-[10px] text-slate-400">Subt. Herrera</div>
-              </button>
-            </div>
-          </div>
 
         </div>
 
         {/* Security Footer Note */}
         <div className="text-center text-[11px] text-slate-500 flex items-center justify-center gap-2">
           <Shield className="w-3.5 h-3.5 text-slate-400" />
-          <span>Acceso cifrado bajo protocolo NFPA • Estación B-233 Paucarpata</span>
+          <span>Acceso mediante cuenta autorizada • Estación B-233 Paucarpata</span>
         </div>
 
       </div>

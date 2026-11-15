@@ -2,10 +2,10 @@
 
 import React from 'react';
 import { useApp } from '@/lib/context/AppContext';
-import { Shield, ShieldAlert, UserCheck, Flame, Radio, FileSpreadsheet, RefreshCw, LogOut } from 'lucide-react';
+import { Shield, ShieldAlert, UserCheck, Flame, Radio, FileSpreadsheet, LogOut } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
-  const { currentUser, switchRole, exportInventoryCSV, resetToInitialData, logout } = useApp();
+  const { currentUser, exportInventoryCSV, logout } = useApp();
 
   return (
     <header className="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 text-slate-100">
@@ -38,7 +38,7 @@ export const Navbar: React.FC = () => {
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
           </span>
           <span className="text-slate-300 font-medium">Estado:</span>
-          <span className="text-emerald-400 font-semibold">100% Operativo en Guardia</span>
+          <span className="text-amber-400 font-semibold">Integración en pruebas</span>
         </div>
 
         {/* Action Controls & Role Switcher */}
@@ -53,14 +53,6 @@ export const Navbar: React.FC = () => {
             >
               <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
               <span>CSV</span>
-            </button>
-            <button
-              onClick={resetToInitialData}
-              title="Restaurar datos iniciales de demostración"
-              className="p-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors flex items-center gap-1.5 text-xs font-medium"
-            >
-              <RefreshCw className="w-4 h-4 text-sky-400" />
-              <span>Reset</span>
             </button>
           </div>
 
@@ -83,28 +75,7 @@ export const Navbar: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex bg-slate-900/90 p-0.5 rounded-lg border border-slate-700/50 text-[11px] font-medium">
-              <button
-                onClick={() => switchRole('admin_logistica')}
-                className={`px-2 py-1 rounded-md transition-all ${
-                  currentUser.role === 'admin_logistica'
-                    ? 'bg-red-600 text-white font-semibold shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                Admin
-              </button>
-              <button
-                onClick={() => switchRole('bombero_operativo')}
-                className={`px-2 py-1 rounded-md transition-all ${
-                  currentUser.role === 'bombero_operativo'
-                    ? 'bg-sky-600 text-white font-semibold shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                Bombero
-              </button>
-            </div>
+            <span className="text-xs text-slate-300">{currentUser.role === 'admin_logistica' ? 'Admin' : 'Bombero'}</span>
 
           </div>
 

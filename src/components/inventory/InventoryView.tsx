@@ -125,27 +125,27 @@ export const InventoryView: React.FC = () => {
     });
   };
 
-  const handleSubmitCreate = (e: React.FormEvent) => {
+  const handleSubmitCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    const result = addResource(formData);
+    const result = await addResource(formData);
     if (result.success) {
       setIsCreateModalOpen(false);
     }
   };
 
-  const handleSubmitEdit = (e: React.FormEvent) => {
+  const handleSubmitEdit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingResource) return;
-    const result = updateResource(editingResource.id, formData);
+    const result = await updateResource(editingResource.id, formData);
     if (result.success) {
       setEditingResource(null);
     }
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (!deletingResource) return;
-    deleteResource(deletingResource.id);
-    setDeletingResource(null);
+    const result = await deleteResource(deletingResource.id);
+    if (result.success) setDeletingResource(null);
   };
 
   return (

@@ -1,5 +1,11 @@
 # SystemBomb 🚒 — Sistema Web de Gestión y Trazabilidad Operativa
 
+> **Aviso importante:** la aplicación utiliza Supabase para autenticación,
+> persistencia y políticas de acceso. Antes de usar datos reales o publicar,
+> verifica permisos, copias de seguridad y recuperación en el entorno desplegado.
+> Las secciones académicas siguientes pueden describir objetivos del proyecto;
+> para el estado de la configuración consulta `supabase/GUIA_CONFIGURACION.md`.
+
 > **Caso de Estudio Social:** Compañía de Bomberos Virgen de Chapi N.° 233 (B-233)  
 > **Jurisdicción:** Paucarpata, Arequipa — VII Comandancia Departamental Arequipa • CGBVP  
 > **Asignatura:** Programación Web — Universidad Continental (Plan 2024 / Consolidado 2)  
@@ -57,9 +63,9 @@ El sistema fue desarrollado con el framework moderno **Next.js 16 (App Router)**
 1. **Control de Acceso Basado en Roles (RBAC):**
    - **Administrador de Logística (`admin_logistica`):** Acceso total (altas, bajas, presupuestos, auditoría).
    - **Bombero Voluntario Operativo (`bombero_operativo`):** Consulta de disponibilidad, solicitud de préstamos y reporte de novedades; botones de baja/eliminación restringidos.
-2. **Cifrado y Hash de Contraseñas:** Algoritmo de hashing seguro (SHA-256 + Salt dinámico) demostrado de forma interactiva en la pestaña de Seguridad.
-3. **Mitigación de XSS y CSRF:** Escape automático del Virtual DOM de React en todos los campos y sanitización estricta de tags HTML.
-4. **Prevención de Inyecciones SQL:** Validación estricta de tipos de datos en TypeScript y esquemas predefinidos en servidor.
+2. **Autenticación:** Supabase Auth gestiona las contraseñas; la aplicación no implementa un algoritmo propio de hash.
+3. **Acceso a datos:** las políticas de Supabase y las funciones de base de datos deben revisarse y probarse directamente.
+4. **Limitaciones:** no se debe asumir que el uso de React o TypeScript elimina todos los riesgos de XSS, CSRF o inyección.
 
 ---
 
@@ -83,19 +89,13 @@ npm run start
 ```
 
 ### Despliegue en Vercel:
-Este proyecto está 100% optimizado para la nube de Vercel con cero configuración requerida:
-1. Subir la carpeta a un repositorio de GitHub (o conectar mediante el MCP de Vercel).
-2. Importar el proyecto en el dashboard de [Vercel](https://vercel.com).
-3. Vercel detectará automáticamente Next.js y compilará la aplicación con HTTPS y CDN global.
+Consulta `supabase/DESPLIEGUE_VERCEL.md` para configurar las variables públicas,
+importar el repositorio y comprobar el despliegue sin subir secretos a GitHub.
 
 ---
 
-## 6. Credenciales de Demostración Rápida
+## 6. Cuentas
 
-En la barra superior de la aplicación se encuentra el selector instantáneo de perfiles, o bien pueden utilizarse las siguientes credenciales:
-
-| Perfil / Cargo | Usuario | Clave Demostración | Nivel de Privilegios |
-|---|---|---|---|
-| **Primer Jefe / Administrador de Logística** | `admin` | `BomberosB233@2026!` | Acceso Total (Altas, Bajas, Costos, Auditoría) |
-| **Bombero Voluntario Seccionario** | `bombero` | `Guardia233*` | Operativo (Consulta, Préstamos, Devolución) |
-| **Maquinista Jefe de Flota** | `maquinista` | `MaquinariaB233#` | Gestión de Flota y Mantenimientos |
+Las cuentas se crean en Supabase Auth y requieren una fila correspondiente en
+`profiles`. No existen credenciales de demostración integradas. Las contraseñas
+no deben almacenarse en este repositorio.

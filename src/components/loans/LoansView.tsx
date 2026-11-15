@@ -27,7 +27,7 @@ const SHIFTS: ShiftType[] = [
 ];
 
 export const LoansView: React.FC = () => {
-  const { loans, resources, createLoan, returnLoan, deleteLoan, currentUser, addToast } = useApp();
+  const { loans, resources, createLoan, returnLoan, cancelLoan, currentUser, addToast } = useApp();
 
   const [activeTab, setActiveTab] = useState<'activos' | 'historial'>('activos');
   const [searchTerm, setSearchTerm] = useState('');
@@ -35,6 +35,7 @@ export const LoansView: React.FC = () => {
   // Modals
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [returningLoan, setReturningLoan] = useState<Loan | null>(null);
+  const [cancelling, setCancelling] = useState(false);
 
   // Create Form State
   const [formData, setFormData] = useState({
@@ -42,7 +43,7 @@ export const LoansView: React.FC = () => {
     firefighterName: currentUser.fullName,
     firefighterRank: currentUser.rank,
     shift: SHIFTS[0],
-    expectedReturnDate: '2026-11-08 20:30',
+    expectedReturnDate: '',
     notes: ''
   });
 
@@ -73,32 +74,49 @@ export const LoansView: React.FC = () => {
       firefighterName: currentUser.fullName,
       firefighterRank: currentUser.rank,
       shift: SHIFTS[0],
-      expectedReturnDate: '2026-11-08 20:30',
+      expectedReturnDate: '',
       notes: ''
     });
     setIsCreateModalOpen(true);
   };
 
-  const handleCreateSubmit = (e: React.FormEvent) => {
+  const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.resourceId) {
       addToast('error', 'Selección requerida', 'Debe seleccionar un equipo disponible.');
       return;
     }
-    const res = createLoan(formData);
+    const returnDate = new Date(formData.expectedReturnDate);
+    if (!formData.expectedReturnDate || Number.isNaN(returnDate.getTime()) || returnDate.getTime() <= Date.now()) {
+      addToast('error', 'Fecha requerida', 'Seleccione una fecha y hora de retorno posteriores al momento actual.');
+      return;
+    }
+    const res = await createLoan(formData);
     if (res.success) {
       setIsCreateModalOpen(false);
     }
   };
 
-  const handleReturnSubmit = (e: React.FormEvent) => {
+  const handleReturnSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!returningLoan) return;
-    const res = returnLoan(returningLoan.id, returnCondition, returnNotes);
+    const res = await returnLoan(returningLoan.id, returnCondition, returnNotes);
     if (res.success) {
       setReturningLoan(null);
       setReturnNotes('');
     }
+  };
+
+  const handleCancel = async (loan: Loan) => {
+    const reason = window.prompt('Anule solo préstamos registrados por error cuando el equipo no haya salido y esté físicamente disponible. Escriba el motivo (5 a 500 caracteres):');
+    if (reason === null) return;
+    if (reason.trim().length < 5 || reason.trim().length > 500) {
+      addToast('error', 'Motivo requerido', 'Escriba un motivo de entre 5 y 500 caracteres.');
+      return;
+    }
+    if (!window.confirm('¿Confirma que el equipo no salió y está disponible? El préstamo quedará como anulado en el historial.')) return;
+    setCancelling(true);
+    try { await cancelLoan(loan.id, reason.trim()); } finally { setCancelling(false); }
   };
 
   return (
@@ -238,6 +256,11 @@ export const LoansView: React.FC = () => {
                         {loan.notes}
                       </div>
                     )}
+                    {loan.cancellationReason && (
+                      <div className="p-2 rounded-lg bg-amber-950/40 text-[11px] text-amber-200 border border-amber-800">
+                        Motivo de anulación: {loan.cancellationReason}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -254,14 +277,15 @@ export const LoansView: React.FC = () => {
                   ) : (
                     <div className="text-[11px] text-slate-400 flex items-center gap-1">
                       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>Completado en almacén</span>
+                      <span>{loan.status === 'Anulado' ? 'Préstamo anulado' : 'Completado en almacén'}</span>
                     </div>
                   )}
 
-                  {currentUser.role === 'admin_logistica' && (
+                  {currentUser.role === 'admin_logistica' && isLoanActive && (
                     <button
-                      onClick={() => deleteLoan(loan.id)}
-                      title="Anular registro de préstamo"
+                      onClick={() => void handleCancel(loan)}
+                      disabled={cancelling}
+                      title="Anular préstamo registrado por error"
                       className="p-2 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-950/40 transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -363,13 +387,13 @@ export const LoansView: React.FC = () => {
 
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
-                    Retorno Esperado
+                    Retorno Esperado *
                   </label>
                   <input
-                    type="text"
+                    type="datetime-local"
+                    required
                     value={formData.expectedReturnDate}
                     onChange={e => setFormData({ ...formData, expectedReturnDate: e.target.value })}
-                    placeholder="YYYY-MM-DD HH:mm"
                     className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-slate-100 font-mono focus:ring-2 focus:ring-sky-500 focus:outline-none"
                   />
                 </div>
@@ -437,7 +461,7 @@ export const LoansView: React.FC = () => {
                 </label>
                 <select
                   value={returnCondition}
-                  onChange={e => setReturnCondition(e.target.value as any)}
+                  onChange={e => setReturnCondition(e.target.value as NonNullable<Loan['conditionIn']>)}
                   className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-slate-100 focus:ring-2 focus:ring-sky-500 focus:outline-none"
                 >
                   <option value="Óptimo">Óptimo (Limpio y listo para uso)</option>
