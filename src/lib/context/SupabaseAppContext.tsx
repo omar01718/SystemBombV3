@@ -3,8 +3,8 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import type { AuditLog, Loan, Maintenance, Resource, ShiftType, User } from '@/types';
 import type { ActiveTab, ToastMessage } from './AppContext';
-import { INITIAL_USERS } from '@/lib/initialData';
 import { supabase } from '@/lib/supabase';
+import { inventoryCsvCell } from '@/lib/csv';
 import * as inventory from '@/lib/inventoryRepository';
 import * as loansRepo from '@/lib/loanRepository';
 import * as maintenance from '@/lib/maintenanceRepository';
@@ -31,7 +31,27 @@ type Context = {
 const AppContext = createContext<Context | undefined>(undefined);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
-  const [currentUser, setCurrentUser] = useState<User>(INITIAL_USERS[0]);
+  const [sessionVersion, setSessionVersion] = useState(0);
+  useEffect(() => {
+    if (!supabase) return;
+    let lastId: string | undefined;
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      const nextId = session?.user.id;
+      if (event === 'SIGNED_OUT' || (lastId && lastId !== nextId)) {
+        // Desmontar también descarta resultados tardíos de la sesión anterior.
+        setSessionVersion(version => version + 1);
+      }
+      lastId = nextId;
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+  return <SessionProvider key={sessionVersion}>{children}</SessionProvider>;
+}
+
+function SessionProvider({ children }: { children: React.ReactNode }) {
+  const [currentUser, setCurrentUser] = useState<User>({
+    id: '', username: '', email: '', fullName: '', role: 'bombero_operativo', rank: '', station: '',
+  });
   const [isAuthenticated, setAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState<ActiveTab>('dashboard');
   const [resources, setResources] = useState<Resource[]>([]);
@@ -107,7 +127,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return true;
   };
   const logout = async () => {
-    await supabase?.auth.signOut();
+    const result = await supabase?.auth.signOut();
+    if (result?.error) {
+      addToast('error', 'Sesión aún abierta', 'No se pudo cerrar la sesión. Compruebe la conexión y vuelva a intentarlo.');
+      return;
+    }
     setAuthenticated(false); setResources([]); setLoans([]); setMaintenance([]); setAuditLogs([]); setAuditAvailable(false); setActiveTab('dashboard');
   };
   const run = async (operation: () => Promise<void>, message: string): Promise<Result> => {
@@ -177,7 +201,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const exportInventoryCSV = () => {
     const rows = [['Código', 'Nombre', 'Categoría', 'Ubicación', 'Estado', 'Stock actual', 'Stock mínimo'],
       ...resources.map(r => [r.code, r.name, r.category, r.location, r.status, String(r.stockActual), String(r.stockMinimo)])];
-    const csv = rows.map(row => row.map(cell => `"${cell.replace(/"/g, '""')}"`).join(',')).join('\n');
+    const csv = rows.map(row => row.map(inventoryCsvCell).join(',')).join('\r\n');
     const url = URL.createObjectURL(new Blob(['\ufeff', csv], { type: 'text/csv;charset=utf-8' }));
     const link = document.createElement('a'); link.href = url; link.download = 'inventario.csv'; link.click(); URL.revokeObjectURL(url);
   };

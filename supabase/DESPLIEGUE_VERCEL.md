@@ -34,6 +34,15 @@ Esta guía no realiza el commit ni el push por ti.
 
 ## Después del despliegue
 
+- En el despliegue de Preview, comprueba con `curl -I https://TU-DOMINIO`
+  que aparecen las cabeceras de `vercel.json`. La política impide incrustar
+  la aplicación en marcos de otros sitios. Verifica también que el acceso por
+  HTTP redirige a HTTPS y que la respuesta HTTPS incluye `Strict-Transport-Security`.
+- Para las conexiones **directas a PostgreSQL**, revisa **SSL enforcement** en
+  la configuración de la base de datos de Supabase. Antes de exigir SSL,
+  configura los clientes directos (incluidas herramientas de respaldo) con el
+  certificado raíz del proyecto y `sslmode=verify-full`, y prueba su conexión.
+  La aplicación web usa la API HTTPS de Supabase: ese ajuste es independiente.
 - Comprueba el inicio de sesión y el cierre de sesión con cuentas de prueba.
 - Prueba inventario, préstamo, devolución, anulación y mantenimiento con datos
   ficticios; comprueba auditoría y permisos de ambos roles.
