@@ -33,7 +33,9 @@ La URL y la clave pública van en `.env.local`. No compartas contraseñas, clave
    - `full_name`: nombre de prueba.
    - `role`: `admin_logistica`.
    - `rank`: grado de prueba, por ejemplo `Bombero`.
-   - `station`: estación de prueba, por ejemplo `B-233`.
+   - `station`: `B-233` (obligatorio). El responsable debe confirmar la pertenencia
+     a la compañía antes de asignar un perfil. Crear una cuenta en Auth por sí
+     solo no concede acceso a los datos operativos.
 4. Guarda y verifica que la fila existe. El UID debe corresponder exactamente
    al usuario creado en Authentication.
 
@@ -54,6 +56,10 @@ administrador; debe instalarse después de la 005. Se conserva el motivo y el
 registro. Solo se debe anular un préstamo registrado por error si el equipo no
 salió y está físicamente disponible; una devolución real debe registrarse como tal.
 Revisar las reglas y ejecutar las pruebas de `PRUEBAS_PENDIENTES.md`.
+
+Después de 006, aplicar `007_restrict_rls_auto_enable_execute.sql` y
+`008_estacion_unica.sql`. El inventario, los préstamos y el mantenimiento
+pertenecen a una sola estación; los roles internos mantienen sus permisos.
 
 No uses datos reales ni publiques el sistema hasta completar la integración y
 comprobar los permisos, transacciones, concurrencia y recuperación de errores.

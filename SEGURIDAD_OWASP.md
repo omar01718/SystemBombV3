@@ -6,7 +6,7 @@ Los controles del servicio y los parches locales tienen estados distintos.
 
 | Riesgo | Evidencia y alcance |
 | --- | --- |
-| A01 Acceso | RLS activa en las cinco tablas. El rol `anon` carece de permisos de lectura, escritura y truncado en ellas. Los perfiles solo se consultan por su titular. Inventario y préstamos son compartidos por los perfiles autorizados: no hay aislamiento por estación. |
+| A01 Acceso | RLS activa en las cinco tablas. El rol `anon` carece de permisos de lectura, escritura y truncado en ellas. Los perfiles solo se consultan por su titular. El despliegue sirve únicamente a la B-233: `profiles.station` solo admite `B-233` y las altas son administrativas. Los perfiles autorizados comparten el inventario y los préstamos de esta estación. |
 | A02 Criptografía | HTTP redirige a HTTPS y Vercel envía HSTS. Supabase exige SSL para PostgreSQL, mínimo TLS 1.2. Los clientes directos deben verificar el certificado y el nombre de host. |
 | A03 Inyección | Los repositorios usan consultas estructuradas y parámetros RPC; no se observó SQL dinámico a partir de entradas ni renderizado HTML crudo en las vistas revisadas. Parche local: neutralización de fórmulas en la exportación CSV. La CSP publicada no restringe `script-src`; no sustituye el escape de salidas. |
 | A04 Diseño | PostgreSQL controla los roles y las operaciones de préstamo, con transacciones y bloqueos de filas. Verificar concurrencia, devolución y anulación con datos ficticios antes de modificar estos flujos. |
@@ -25,10 +25,16 @@ solo ven su propio perfil y ninguno tiene permiso de actualizar `profiles`.
 El administrador ve filas de auditoría; el operador no ve ninguna. Esta prueba
 comprueba las políticas de lectura, no sustituye un inicio de sesión de extremo a extremo.
 
+Ensayo local de restauración: se aplicaron las migraciones 001–008 en PGlite
+con un perfil ficticio y se restauró la imagen en una instancia nueva. Se
+comprobó que el perfil conservaba `B-233`, que las cinco tablas conservaban RLS
+y que la restricción rechazaba otra estación y una estación omitida. No se
+exportaron datos de producción ni se probó el respaldo administrado de Supabase.
+
 1. En un entorno de pruebas, iniciar sesión con los dos roles; comprobar permisos,
    exportar inventario y abrir el CSV con el programa de hojas de cálculo que se use en la estación.
 2. Verificar que un cambio de inventario de prueba genera auditoría y que el equipo
    responsable puede consultar los registros de autenticación sin exponer credenciales.
 3. Revisar las URL permitidas de recuperación y hacer un simulacro de restauración con
-   datos de prueba. Si se incorporan varias estaciones, definir antes la política
-   de visibilidad de sus registros.
+   datos de prueba. No incorporar otra estación a este despliegue sin rediseñar
+   primero el modelo de acceso y las políticas.
