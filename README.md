@@ -17,6 +17,12 @@
 
 ---
 
+## Entrega para el docente
+
+- [Presentación en PDF](docs/entrega-b233/Presentacion.pdf) · [versión HTML sin conexión](docs/entrega-b233/Presentacion.html)
+- [Guía de evaluación y resultados por rol](docs/entrega-b233/Guia-del-docente.md)
+- [Laboratorio con datos ficticios](https://system-bomb-b233-laboratorio.vercel.app/) · [revisión OWASP](SEGURIDAD_OWASP.md)
+
 ## 1. Problemática Social y Justificación
 
 La Compañía de Bomberos B-233 atiende diariamente emergencias críticas en el distrito de Paucarpata (más de 130,000 habitantes). La falta de un sistema digitalizado provocaba que el registro de Equipos de Protección Personal (EPP), cilindros ERA y herramientas hidráulicas se llevara en cuadernos manuales, generando demoras en la salida de las autobombas e incertidumbre sobre la disponibilidad de los equipos.
