@@ -19,6 +19,7 @@
 
 ## Entrega para el docente
 
+- [Usuarios demo: ingresar como administrador o bombero](USUARIOS_DEMO.md)
 - [Presentación en PDF](docs/entrega-b233/Presentacion.pdf) · [versión HTML sin conexión](docs/entrega-b233/Presentacion.html)
 - [Guía de evaluación y resultados por rol](docs/entrega-b233/Guia-del-docente.md)
 - [Laboratorio con datos ficticios](https://system-bomb-b233-laboratorio.vercel.app/) · [revisión OWASP](SEGURIDAD_OWASP.md)
