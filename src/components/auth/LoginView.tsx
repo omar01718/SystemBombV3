@@ -34,6 +34,7 @@ export const LoginView: React.FC = () => {
   const [rememberStation, setRememberStation] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [liveTime, setLiveTime] = useState<string>('--:--:--');
+  const [shouldPlayVideo, setShouldPlayVideo] = useState(false);
 
   useEffect(() => {
     const initial = setTimeout(() => {
@@ -45,6 +46,25 @@ export const LoginView: React.FC = () => {
     return () => {
       clearTimeout(initial);
       clearInterval(interval);
+    };
+  }, []);
+
+  useEffect(() => {
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const desktopQuery = window.matchMedia('(min-width: 1024px)');
+
+    const syncVideoPreference = () => {
+      setShouldPlayVideo(desktopQuery.matches && !motionQuery.matches);
+    };
+
+    const initial = setTimeout(syncVideoPreference, 0);
+    motionQuery.addEventListener('change', syncVideoPreference);
+    desktopQuery.addEventListener('change', syncVideoPreference);
+
+    return () => {
+      clearTimeout(initial);
+      motionQuery.removeEventListener('change', syncVideoPreference);
+      desktopQuery.removeEventListener('change', syncVideoPreference);
     };
   }, []);
 
@@ -72,41 +92,58 @@ export const LoginView: React.FC = () => {
     <div className="min-h-screen w-full grid grid-cols-1 lg:grid-cols-[58%_42%] bg-[#070B14] text-slate-100 selection:bg-red-600 selection:text-white">
       {/* Left Panel (58% desktop / 220px mobile header) */}
       <section className="relative h-[220px] sm:h-[260px] lg:h-auto lg:min-h-screen overflow-hidden flex flex-col justify-between p-5 sm:p-8 lg:p-12">
-        {/* Background Photo with dark cinematic filter */}
+        {/* Static Poster Fallback (visible on mobile, reduced-motion, or while video buffers) */}
         <Image
-          src="/images/bombero-login.jpg"
+          src="/assets/videos/bomberos-poster.webp"
           alt="Bombero de la Compañía B-233 en acción"
           fill
           priority
           unoptimized
           sizes="(max-width: 1024px) 100vw, 58vw"
-          className="object-cover object-center brightness-[0.82] contrast-[1.08] saturate-[1.08]"
+          className="object-cover object-center brightness-[0.82] contrast-[1.08] saturate-[1.08] pointer-events-none select-none"
         />
 
-        {/* Mobile bottom fade into #070B14 */}
+        {/* Native Looping Background Video (desktop + motion allowed only) */}
+        {shouldPlayVideo && (
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            poster="/assets/videos/bomberos-poster.webp"
+            aria-hidden="true"
+            onContextMenu={(e) => e.preventDefault()}
+            className="hidden lg:block motion-reduce:hidden absolute inset-0 w-full h-full object-cover object-center brightness-[0.82] contrast-[1.08] saturate-[1.08] pointer-events-none select-none"
+          >
+            <source src="/assets/videos/bomberos-bg.mp4" type="video/mp4" />
+          </video>
+        )}
+
+        {/* Overlay Layer 1: Mobile bottom fade into #070B14 */}
         <div
           aria-hidden="true"
-          className="lg:hidden absolute inset-0"
+          className="lg:hidden absolute inset-0 pointer-events-none"
           style={{
             background:
               'linear-gradient(to bottom, rgba(6,10,19,0.35) 0%, rgba(6,10,19,0.65) 60%, #070B14 100%)',
           }}
         />
 
-        {/* Desktop smooth lateral gradient into #070B14 (no hard vertical border) */}
+        {/* Overlay Layer 1: Desktop horizontal fade into #070B14 (no hard border) */}
         <div
           aria-hidden="true"
-          className="hidden lg:block absolute inset-0"
+          className="hidden lg:block absolute inset-0 pointer-events-none"
           style={{
             background:
               'linear-gradient(to right, rgba(6,10,19,0.15) 0%, rgba(6,10,19,0.55) 70%, #070B14 100%)',
           }}
         />
 
-        {/* Subtle vertical vignette for top/bottom text legibility */}
+        {/* Overlay Layer 2: Subtle vertical gradient top & bottom for text contrast */}
         <div
           aria-hidden="true"
-          className="hidden lg:block absolute inset-0 bg-gradient-to-b from-[#060A13]/75 via-transparent to-[#070B14]/85"
+          className="absolute inset-0 bg-gradient-to-b from-[#060A13]/80 via-transparent to-[#070B14]/90 pointer-events-none"
         />
 
         {/* Top-Left Institutional Block */}
