@@ -35,7 +35,7 @@ export default function RootLayout({
       lang="es"
       className={`${inter.variable} ${plusJakartaSans.variable} ${jetbrainsMono.variable} h-full antialiased dark`}
     >
-      <body className="min-h-full flex flex-col bg-slate-950 text-slate-100 font-sans antialiased selection:bg-red-600 selection:text-white">
+      <body className="min-h-full flex flex-col bg-[#070B14] text-slate-100 font-sans antialiased selection:bg-red-600 selection:text-white">
         {children}
       </body>
     </html>
