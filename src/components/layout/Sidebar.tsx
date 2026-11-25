@@ -138,9 +138,9 @@ export const Sidebar: React.FC = () => {
   );
 
   return (
-    <aside className="w-full md:w-64 bg-[#090E1A]/80 backdrop-blur-xl border-r border-white/[0.08] flex flex-col shrink-0">
+    <aside className="w-full md:w-64 md:h-full bg-[#090E1A]/90 backdrop-blur-xl border-r border-white/[0.08] flex flex-col shrink-0">
       {/* Navigation Links */}
-      <nav className="p-3 space-y-4 flex-1">
+      <nav className="p-3 space-y-4 flex-1 overflow-y-auto">
         {renderGroup('Operaciones B-233', 'operaciones')}
         {renderGroup('Control y Seguridad', 'control')}
       </nav>

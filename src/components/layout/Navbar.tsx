@@ -34,8 +34,8 @@ export const Navbar: React.FC = () => {
   const isAdmin = currentUser.role === 'admin_logistica';
 
   return (
-    <header className="sticky top-0 z-40 h-16 bg-[#090E1A]/90 backdrop-blur-xl border-b border-white/[0.08] text-slate-100">
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 h-full flex items-center justify-between gap-3">
+    <header className="sticky md:static top-0 z-40 h-16 shrink-0 w-full bg-[#090E1A]/95 backdrop-blur-xl border-b border-white/[0.08] text-slate-100">
+      <div className="w-full px-4 sm:px-6 h-full flex items-center justify-between gap-3">
         {/* Left: Institutional Brand */}
         <div className="flex items-center gap-3 min-w-0">
           <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-red-600/30 to-amber-500/15 border border-red-500/40 flex items-center justify-center shadow-[0_0_20px_rgba(220,38,38,0.25)] shrink-0">
@@ -53,7 +53,7 @@ export const Navbar: React.FC = () => {
                 B-233 PAUCARPATA
               </span>
             </div>
-            <p className="text-[11px] text-slate-400 hidden sm:block truncate">
+            <p className="text-[11px] text-slate-400 hidden lg:block truncate">
               VII Comandancia Departamental Arequipa • CGBVP
             </p>
           </div>

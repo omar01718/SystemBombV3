@@ -37,7 +37,7 @@ const MainAppContent: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#070B14] text-slate-100 relative selection:bg-red-600 selection:text-white">
+    <div className="min-h-screen md:h-screen md:overflow-hidden flex flex-col bg-[#070B14] text-slate-100 relative selection:bg-red-600 selection:text-white">
       {/* Subtle C4i Ambient Background Layers */}
       <div
         aria-hidden="true"
@@ -57,7 +57,7 @@ const MainAppContent: React.FC = () => {
       <Navbar />
 
       {/* Mobile Tactical Action Bar */}
-      <div className="md:hidden sticky top-16 z-30 flex items-center justify-between px-4 py-2.5 bg-[#090E1A]/90 backdrop-blur-xl border-b border-white/[0.08]">
+      <div className="md:hidden sticky top-16 z-30 flex items-center justify-between px-4 py-2.5 bg-[#090E1A]/95 backdrop-blur-xl border-b border-white/[0.08]">
         <button
           type="button"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -89,9 +89,9 @@ const MainAppContent: React.FC = () => {
       </div>
 
       {/* Main Body */}
-      <div className="relative z-10 flex-1 flex flex-col md:flex-row">
+      <div className="relative z-10 flex-1 flex flex-col md:flex-row md:min-h-0">
         {/* Desktop Sidebar */}
-        <div className="hidden md:flex">
+        <div className="hidden md:flex md:h-full md:shrink-0">
           <Sidebar />
         </div>
 
@@ -124,32 +124,34 @@ const MainAppContent: React.FC = () => {
         )}
 
         {/* Dynamic View Content */}
-        <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
-          {activeTab === 'dashboard' && <DashboardView />}
-          {activeTab === 'inventory' && <InventoryView />}
-          {activeTab === 'loans' && <LoansView />}
-          {activeTab === 'maintenance' && <MaintenanceView />}
-          {activeTab === 'audit' && currentUser.role === 'admin_logistica' && auditAvailable && (
-            <AuditView />
-          )}
-          {activeTab === 'audit' && (currentUser.role !== 'admin_logistica' || !auditAvailable) && (
-            <div className="rounded-2xl border border-amber-500/30 bg-[#0D1322]/85 backdrop-blur-xl p-6 flex items-start gap-3.5 text-amber-100 shadow-xl">
-              <div className="h-10 w-10 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center shrink-0">
-                <ShieldAlert className="w-5 h-5 text-amber-400" />
+        <main className="flex-1 min-w-0 md:h-full md:overflow-y-auto">
+          <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
+            {activeTab === 'dashboard' && <DashboardView />}
+            {activeTab === 'inventory' && <InventoryView />}
+            {activeTab === 'loans' && <LoansView />}
+            {activeTab === 'maintenance' && <MaintenanceView />}
+            {activeTab === 'audit' && currentUser.role === 'admin_logistica' && auditAvailable && (
+              <AuditView />
+            )}
+            {activeTab === 'audit' && (currentUser.role !== 'admin_logistica' || !auditAvailable) && (
+              <div className="rounded-2xl border border-amber-500/30 bg-[#0D1322]/85 backdrop-blur-xl p-6 flex items-start gap-3.5 text-amber-100 shadow-xl">
+                <div className="h-10 w-10 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center shrink-0">
+                  <ShieldAlert className="w-5 h-5 text-amber-400" />
+                </div>
+                <div>
+                  <h3 className="font-display text-sm font-bold text-white uppercase tracking-wide">
+                    Acceso de Auditoría Restringido
+                  </h3>
+                  <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+                    {currentUser.role !== 'admin_logistica'
+                      ? 'La bitácora de auditoría está reservada únicamente para el Administrador de Logística.'
+                      : 'La auditoría no está disponible en este momento. Compruebe la migración 005 y la conexión con Supabase.'}
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-display text-sm font-bold text-white uppercase tracking-wide">
-                  Acceso de Auditoría Restringido
-                </h3>
-                <p className="text-xs text-slate-300 mt-1 leading-relaxed">
-                  {currentUser.role !== 'admin_logistica'
-                    ? 'La bitácora de auditoría está reservada únicamente para el Administrador de Logística.'
-                    : 'La auditoría no está disponible en este momento. Compruebe la migración 005 y la conexión con Supabase.'}
-                </p>
-              </div>
-            </div>
-          )}
-          {activeTab === 'security' && <SecurityView />}
+            )}
+            {activeTab === 'security' && <SecurityView />}
+          </div>
         </main>
       </div>
 
