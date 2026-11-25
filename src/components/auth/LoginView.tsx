@@ -53,8 +53,9 @@ export const LoginView: React.FC = () => {
           alt="Bombero de la Compañía B-233 en acción"
           fill
           priority
+          unoptimized
           sizes="(max-width: 1024px) 100vw, 60vw"
-          className="object-cover object-center scale-[1.01]"
+          className="object-cover object-center"
         />
 
         {/* Dark Gradient Overlays for Contrast & Split Integration */}
