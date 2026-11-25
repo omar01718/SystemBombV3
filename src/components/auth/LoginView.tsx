@@ -89,9 +89,9 @@ export const LoginView: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen w-full grid grid-cols-1 lg:grid-cols-[58%_42%] bg-[#070B14] text-slate-100 selection:bg-red-600 selection:text-white">
-      {/* Left Panel (58% desktop / 220px mobile header) */}
-      <section className="relative h-[220px] sm:h-[260px] lg:h-auto lg:min-h-screen overflow-hidden flex flex-col justify-between p-5 sm:p-8 lg:p-12">
+    <div className="min-h-screen w-full flex flex-col lg:grid lg:grid-cols-[58%_42%] bg-[#070B14] text-slate-100 selection:bg-red-600 selection:text-white">
+      {/* Left Panel (58% desktop / 200px mobile header) */}
+      <section className="relative h-[200px] sm:h-[240px] lg:h-auto lg:min-h-screen shrink-0 overflow-hidden flex flex-col justify-between p-5 sm:p-8 lg:p-12">
         {/* Static Poster Fallback (visible on mobile, reduced-motion, or while video buffers) */}
         <Image
           src="/assets/videos/bomberos-poster.webp"
@@ -186,7 +186,7 @@ export const LoginView: React.FC = () => {
       </section>
 
       {/* Right Panel (42% desktop): C4i Tactical Console */}
-      <section className="relative flex flex-col justify-center px-4 py-6 sm:px-8 sm:py-10 lg:px-10 bg-[#070B14] overflow-hidden">
+      <section className="relative flex-1 flex flex-col justify-start sm:justify-center px-4 pt-2 pb-8 sm:px-8 sm:py-10 lg:px-10 bg-[#070B14] overflow-hidden">
         {/* Layer 1: Topographic Contour SVG Pattern with radial mask */}
         <div
           aria-hidden="true"
@@ -208,15 +208,15 @@ export const LoginView: React.FC = () => {
         />
 
         {/* Tactical Console Outer Frame (max-w-[440px], balanced vertical rhythm) */}
-        <div className="relative z-10 max-w-[440px] w-full mx-auto rounded-2xl border border-white/[0.08] bg-[#0A0F1C]/60 p-6 backdrop-blur-sm space-y-5">
+        <div className="relative z-10 max-w-[440px] w-full mx-auto rounded-2xl border border-white/[0.08] bg-[#0A0F1C]/60 p-4 sm:p-6 backdrop-blur-sm space-y-4 sm:space-y-5">
           {/* Header aligned to card width */}
-          <header className="w-full flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-red-600/25 to-amber-500/10 border border-red-500/35 shadow-[0_0_20px_rgba(220,38,38,0.28)]">
-                <Flame className="w-4.5 h-4.5 text-red-500" />
+          <header className="w-full flex flex-wrap items-center justify-between gap-2.5">
+            <div className="flex items-center gap-2 shrink-0">
+              <div className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-red-600/25 to-amber-500/10 border border-red-500/35 shadow-[0_0_20px_rgba(220,38,38,0.28)]">
+                <Flame className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-red-500" />
               </div>
-              <div className="flex items-center gap-2 min-w-0">
-                <span className="font-display text-lg font-bold tracking-tight text-white truncate">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <span className="font-display text-base sm:text-lg font-bold tracking-tight text-white whitespace-nowrap">
                   SystemBomb
                 </span>
                 <span className="font-mono text-[10px] font-semibold px-1.5 py-0.5 rounded bg-red-600 text-white tracking-wider shrink-0">
@@ -226,11 +226,11 @@ export const LoginView: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-1.5 shrink-0">
-              <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-950/70 border border-emerald-500/30 font-mono text-[10px] font-medium text-emerald-400 tracking-wider uppercase">
+              <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-950/70 border border-emerald-500/30 font-mono text-[9px] sm:text-[10px] font-medium text-emerald-400 tracking-wider uppercase whitespace-nowrap">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 <span>SISTEMA EN LÍNEA</span>
               </div>
-              <div className="hidden sm:inline-flex items-center gap-1 px-2 py-1 rounded-md bg-[#090E1A] border border-white/10 font-mono text-[10px] text-slate-300 tracking-wider">
+              <div className="hidden sm:inline-flex items-center gap-1 px-2 py-1 rounded-md bg-[#090E1A] border border-white/10 font-mono text-[10px] text-slate-300 tracking-wider whitespace-nowrap">
                 <Lock className="w-3 h-3 text-slate-400 shrink-0" />
                 <span>AES-256</span>
               </div>
@@ -238,7 +238,7 @@ export const LoginView: React.FC = () => {
           </header>
 
           {/* Premium Glassmorphism Login Card */}
-          <div className="relative rounded-2xl bg-[#0D1322]/80 backdrop-blur-xl border border-white/10 p-6 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.08)]">
+          <div className="relative rounded-2xl bg-[#0D1322]/80 backdrop-blur-xl border border-white/10 p-4 sm:p-6 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.08)]">
             {/* Tactical 8px Corner Accents in subtle red */}
             <span className="pointer-events-none absolute top-0 left-0 w-2 h-2 border-t border-l border-red-500/50 rounded-tl-2xl" />
             <span className="pointer-events-none absolute top-0 right-0 w-2 h-2 border-t border-r border-red-500/50 rounded-tr-2xl" />
